@@ -1,4 +1,4 @@
-name: "PR Comment Build Action for openjdk-tests"
+name: "PR Comment Build Action for openj9"
 on:
   issue_comment:
     types: [created]
@@ -83,6 +83,7 @@ jobs:
           - platform: ${{ steps.argparse.outputs.platform }}
           - jdk_version: ${{ steps.argparse.outputs.jdk_version }}
           - jdk_impl: ${{ steps.argparse.outputs.jdk_impl }}
+          - openjdk_testrepo: ${{ steps.argparse.outputs.openjdk_testrepo }}
           - tkg_repo: ${{ steps.argparse.outputs.tkg_repo }}
 
           Workflow Run ID: [${{ steps.workflow_run_info.outputs.id }}](${{ steps.workflow_run_info.outputs.url }})
@@ -95,16 +96,7 @@ jobs:
           })
     - name: Echo parameters
       run: |
-        echo build_parameters: ${{ steps.argparse.outputs.build_parameters }}
-        echo sdk_resource: ${{ steps.argparse.outputs.sdk_resource }}
-        echo customized_sdk_url: ${{ steps.argparse.outputs.customized_sdk_url }}
-        echo archive_extension: ${{ steps.argparse.outputs.archive_extension }}
-        echo build_list: ${{ steps.argparse.outputs.build_list }}
-        echo target: ${{ steps.argparse.outputs.target }}
-        echo platform: ${{ steps.argparse.outputs.platform }}
-        echo jdk_version: ${{ steps.argparse.outputs.jdk_version }}
-        echo jdk_impl: ${{ steps.argparse.outputs.jdk_impl }}
-        echo tkg_repo: ${{ steps.argparse.outputs.tkg_repo }}
+        echo ${{ steps.argparse.outputs.build_parameters }}
 
   runBuild:
     runs-on: ${{ matrix.platform }}
@@ -146,13 +138,14 @@ jobs:
             core.setFailed(`Request failed with error ${err}`)
           }
     - name: AQA
-      uses: renfeiw/run-aqa@v1
+      uses: renfeiw/run-aqa@master
       with:
          build_list: ${{ matrix.build_list }}
          target: ${{ matrix.target }}
          jdksource: 'install-jdk'
          version: ${{ matrix.jdk_version }}
          openj9_repo: '${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}:${{ fromJSON(steps.get-pr.outputs.result).head.ref }}'
+         openjdk_testRepo: ${{ matrix.openjdk_testrepo }}
          tkg_Repo: ${{ matrix.tkg_repo }}
     - uses: actions/upload-artifact@v2
       if: failure()
