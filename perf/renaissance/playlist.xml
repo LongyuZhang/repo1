@@ -19,6 +19,13 @@
 <playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
 	<test>
 		<testCaseName>renaissance-akka-uct</testCaseName>
+		<disables>
+			<disable>
+				<comment>https://github.com/renfeiw/repo1/issues/92#issuecomment-867901138</comment>
+				<impl>openj9</impl>
+				<platform>.*windows.*</platform>
+			</disable>
+		</disables>
 		<disabled>
 			<comment>https://github.com/AdoptOpenJDK/openjdk-tests/issues/1994#issuecomment-705633262</comment>
 		</disabled>
