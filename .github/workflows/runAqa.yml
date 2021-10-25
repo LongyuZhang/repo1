@@ -105,21 +105,6 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.parseComment.outputs.build_parameters) }}
     steps:
-    - uses: AdoptOpenJDK/install-jdk@v1
-      if: matrix.sdk_resource != 'customized'
-      with:
-        version: ${{ matrix.jdk_version }}
-        source: ${{ matrix.sdk_resource }}
-        sourceType: 'buildType'
-        impl: ${{ matrix.jdk_impl }}
-    - uses: AdoptOpenJDK/install-jdk@v1
-      if: matrix.sdk_resource == 'customized'
-      with:
-        version: ${{ matrix.jdk_version }}
-        source: ${{ matrix.customized_sdk_url }}
-        archiveExtension: ${{ matrix.archive_extension }}
-        sourceType: 'url'
-        impl: ${{ matrix.jdk_impl }}
     # get-pr step by @Simran-B https://github.com/actions/checkout/issues/331#issuecomment-707103442
     - uses: actions/github-script@v3
       id: get-pr
@@ -138,14 +123,15 @@ jobs:
             core.setFailed(`Request failed with error ${err}`)
           }
     - name: AQA
-      uses: renfeiw/run-aqa@master
+      uses: renfeiw/run-aqa@custom
       with:
          build_list: ${{ matrix.build_list }}
          target: ${{ matrix.target }}
-         jdksource: 'install-jdk'
+         jdksource: ${{ matrix.sdk_resource }}
+         customizedSdkUrl: ${{ matrix.customized_sdk_url }}
          version: ${{ matrix.jdk_version }}
-         openj9_repo: '${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}:${{ fromJSON(steps.get-pr.outputs.result).head.ref }}'
-         openjdk_testRepo: ${{ matrix.openjdk_testrepo }}
+         openj9_repo: ${{ matrix.openj9_repo }}
+         aqa-testsRepo: ${{ matrix.openjdk_testrepo }}
          tkg_Repo: ${{ matrix.tkg_repo }}
     - uses: actions/upload-artifact@v2
       if: failure()
