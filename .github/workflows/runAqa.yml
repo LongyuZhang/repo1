@@ -26,8 +26,8 @@ jobs:
     - name: Checkout main TKG repo
       uses: actions/checkout@v2
       with:
-        repository: 'adoptium/TKG.git'
-        ref: 'master'
+        repository: 'renfeiw/TKG.git'
+        ref: 'runaqa'
         path: 'TKG'
     - name: Parse parameters
       env:
