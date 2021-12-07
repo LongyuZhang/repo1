@@ -26,8 +26,8 @@ jobs:
     - name: Checkout main TKG repo
       uses: actions/checkout@v2
       with:
-        repository: 'renfeiw/TKG.git'
-        ref: 'runaqa'
+        repository: 'adoptium/TKG.git'
+        ref: 'master'
         path: 'TKG'
     - name: Parse parameters
       env:
@@ -123,7 +123,7 @@ jobs:
             core.setFailed(`Request failed with error ${err}`)
           }
     - name: AQA
-      uses: renfeiw/run-aqa@custom
+      uses: adoptium/run-aqa@v2
       with:
          build_list: ${{ matrix.build_list }}
          target: ${{ matrix.target }}
