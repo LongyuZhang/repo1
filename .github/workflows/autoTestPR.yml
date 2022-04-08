@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: 'renfeiw/TKG.git'
-          ref: 'disabled'
+          ref: 'testbot2'
           path: 'TKG'
       - name: run script
         env:
