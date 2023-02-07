@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+
+<!--
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+
+<project name="Compile Java Test Projects" basedir="." default="build">
+
+	<description>Compile Java Test Projects</description>
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+
+	<property name="ascii.workspace.dir" value="${TEST_ROOT}" />
+	<property name="ascii.test.dir" value="${BUILD_ROOT}" />
+	<property name="JDK_VERSION" value=""/>
+	<property name="TEST_JDK_HOME" value="${TEST_JDK_HOME}" />
+	<property name="JAVAC" value="${TEST_JDK_HOME}/bin/javac" />
+
+	<import file="./getDependencies.xml"/>
+
+	<var name="build.list" value= "" />
+	<if>
+		<equals arg1="${BUILD_LIST}" arg2=""/>
+		<then>
+			<var name="build.list" value= "*/build.xml" />
+		</then>
+		<elseif>
+			<equals arg1="${BUILD_LIST}" arg2="NULL"/>
+			<then>
+				<var name="build.list" value= "NULL" />
+			</then>
+		</elseif>
+		<else>
+			<var name="build.list" value="TestConfig/build.xml" />
+			<for list="${BUILD_LIST}" param="builddir">
+				<sequential>
+					<var name="build.list" value="${build.list},@{builddir}/build.xml" />
+				</sequential>
+			</for>
+		</else>
+	</if>
+	<echo> build.list is ${build.list} </echo>
+
+	<macrodef name="checkGitRepoSha">
+		<attribute name="repoDir" default="." />
+		<sequential>
+			<exec executable="bash" failonerror="true">
+				<arg line="${TEST_ROOT}/TKG/scripts/getSHA.sh" />
+				<arg line="--repo_dir @{repoDir}" />
+				<arg line="--output_file ${TEST_ROOT}/TKG/SHA.txt" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="addTestenvProperties">
+		<attribute name="repoDir" default="." />
+		<attribute name="repoName" default="" />
+		<sequential>
+			<exec executable="bash" failonerror="true">
+				<arg line="${TEST_ROOT}/TKG/scripts/getTestenvProperties.sh" />
+				<arg line="--repo_dir @{repoDir}" />
+				<arg line="--repo_name @{repoName}" />
+				<arg line="--output_file ${TEST_ROOT}/testenv/testenv.properties" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="set-property">
+		<attribute name="name" />
+		<attribute name="if-property-isset" />
+		<attribute name="value" default="${@{if-property-isset}}" />
+		<sequential>
+			<condition property="@{name}" value="@{value}">
+				<and>
+					<isset property="@{if-property-isset}" />
+					<not>
+						<equals arg1="${@{if-property-isset}}" arg2="" />
+					</not>
+				</and>
+			</condition>
+		</sequential>
+	</macrodef>
+
+	<target name="build" depends="stage_test_material" description="using ${JDK_VERSION} to compile the source ">
+		<subant target="">
+			<property name="build.dir" value="subant1.build" />
+			<property name="not.overloaded" value="not.overloaded" />
+			<property name="JDK_VERSION" value="${JDK_VERSION}" />
+			<property name="compiler.javac" value="${JAVAC}" />
+			<fileset dir="../../" includes="${build.list}">
+				<exclude name="TEST_*/build.xml" />
+			</fileset>
+		</subant>
+	</target>
+
+	<target name="-create_test_directory">
+		<mkdir dir="${ascii.test.dir}" />
+	</target>
+
+	<target name="stage_test_material" depends="-create_test_directory">
+		<copy todir="${ascii.test.dir}">
+			<fileset dir="${ascii.workspace.dir}">
+				<include name="TKG/**" />
+				<include name="*.mk" />
+			</fileset>
+		</copy>
+
+		<chmod dir="${ascii.test.dir}/TKG" perm="755"/>
+
+		<chmod file="${ascii.test.dir}/*.mk" perm="755"/>
+	</target>
+
+	<macrodef name="getFileWithRetry">
+		<attribute name="file" />
+		<attribute name="command" />
+		<attribute name="dest" default="." />
+		<sequential>
+			<exec executable="bash" failonerror="true" dir="@{dest}">
+				<arg line="${TEST_ROOT}/TKG/scripts/getFileWithRetry.sh" />
+				<arg line="--file @{file}" />
+				<arg line="--command &quot;@{command}&quot;" />
+			</exec>
+		</sequential>
+	</macrodef>
+</project>

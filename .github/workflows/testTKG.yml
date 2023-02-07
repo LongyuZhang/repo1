@@ -1,0 +1,111 @@
+name: "Run TKG Tests"
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  testTKG:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.comment.body, 'run tkg-test')
+    steps:
+      - uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+          path: 'testTKG'
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 11
+
+      - name: Create success comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            comment_body = `
+            @${{ github.actor }} TKG test build started, workflow Run ID: [${{ GITHUB.RUN_ID }}](${{ GITHUB.SERVER_URL }}/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }})
+            `;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment_body
+            })
+
+      - name: parse options
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          echo "TKG_TEST_OPTIONS=`echo '${{ env.COMMENT_BODY }}' | sed 's/.*run tkg-test\(.*\)/\1/'`" >> $GITHUB_ENV
+
+      - name: run script
+        env:
+          TEST_JDK_HOME: ${{ env.JAVA_HOME }}
+          TEST_OPTIONS: ${{ env.TKG_TEST_OPTIONS }}
+        run: |
+          cd testTKG/TKG/scripts/testTKG
+          python testRunner.py $TEST_OPTIONS
+
+  reportFailure:
+    runs-on: ubuntu-latest
+    needs: [testTKG]
+    if: failure()
+    steps:
+    - name: Create comment
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          comment_body = `
+          @${{ github.actor }} Build(s) failed, workflow Run ID: [${{ GITHUB.RUN_ID }}](${{ GITHUB.SERVER_URL }}/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }})
+          `;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment_body
+          })
+
+  reportCancel:
+    runs-on: ubuntu-latest
+    needs: [testTKG]
+    if: cancelled()
+    steps:
+    - name: Create comment
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          comment_body = `
+          @${{ github.actor }} Build(s) cancelled, workflow Run ID: [${{ GITHUB.RUN_ID }}](${{ GITHUB.SERVER_URL }}/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }})
+          `;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment_body
+          })
+
+  reportSuccess:
+    runs-on: ubuntu-latest
+    needs: [testTKG]
+    if: success()
+    steps:
+    - name: Create comment
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          comment_body = `
+          @${{ github.actor }} Build(s) successful, workflow Run ID: [${{ GITHUB.RUN_ID }}](${{ GITHUB.SERVER_URL }}/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }})
+          `;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment_body
+          })
