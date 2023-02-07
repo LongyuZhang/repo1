@@ -1,6 +1,0 @@
-{
-    "workflow_repo": "eclipse-openj9/openj9",
-    "custom_openjdk_testrepo": true,
-    "custom_openj9_repo": true,
-    "custom_tkg_repo": true
-}

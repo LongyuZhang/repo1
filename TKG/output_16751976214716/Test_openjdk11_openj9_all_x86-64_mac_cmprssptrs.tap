@@ -1,0 +1,66 @@
+# AQACert.log content: 
+# DETECTED_JAVA_VERSION=openjdk version "11.0.9" 2020-10-20
+# OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.9+11)
+# Eclipse OpenJ9 VM AdoptOpenJDK (build openj9-0.23.0, JRE 11 Mac OS X amd64-64-Bit Compressed References 20201023_788 (JIT enabled, AOT enabled)
+# OpenJ9   - 0394ef754
+# OMR      - 582366ae5
+# JCL      - 3b09cfd7e9 based on jdk-11.0.9+11)
+# DETECTED_RELEASE_INFO=IMPLEMENTOR="Eclipse OpenJ9"
+# IMPLEMENTOR_VERSION="AdoptOpenJDK"
+# JAVA_VERSION="11.0.9"
+# JAVA_VERSION_DATE="2020-10-20"
+# MODULES="java.base java.compiler java.datatransfer java.xml java.prefs java.desktop java.instrument java.logging java.management java.security.sasl java.naming java.rmi java.management.rmi java.net.http java.scripting java.security.jgss java.transaction.xa java.sql java.sql.rowset java.xml.crypto java.se java.smartcardio jdk.accessibility jdk.internal.jvmstat jdk.attach jdk.charsets jdk.compiler jdk.crypto.ec jdk.crypto.cryptoki jdk.dynalink jdk.internal.ed jdk.editpad jdk.httpserver jdk.internal.le jdk.internal.opt jdk.jartool jdk.javadoc jdk.jcmd jdk.management jdk.management.agent jdk.jconsole jdk.jdeps jdk.jdwp.agent jdk.jdi jdk.jlink jdk.jshell jdk.jsobject jdk.localedata jdk.naming.dns jdk.naming.ldap jdk.naming.rmi jdk.net jdk.pack jdk.rmic jdk.scripting.nashorn jdk.scripting.nashorn.shell jdk.sctp jdk.security.auth jdk.security.jgss jdk.unsupported jdk.unsupported.desktop jdk.xml.dom jdk.zipfs openj9.cuda openj9.dataaccess openj9.traceformat openj9.dtfj openj9.dtfjview openj9.gpu openj9.jvm openj9.sharedclasses openj9.zosconditionhandling"
+# OS_ARCH="x86_64"
+# OS_NAME="Darwin"
+# SOURCE="OpenJDK:3b09cfd7e9 OpenJ9:0394ef754 OMR:582366ae5"
+# BUILD_SOURCE="git:8f6858f6"
+# FULL_VERSION="11.0.9+11"
+# SEMANTIC_VERSION="11.0.9+11"
+# BUILD_INFO="OS: Mac OS X Version: 10.14.6 18G84"
+# JVM_VARIANT="Openj9"
+# JVM_VERSION="openj9-0.23.0"
+# HEAP_SIZE="Standard"
+# IMAGE_TYPE="JDK"
+# 
+#SHA.txt content: 
+# ================================================
+# timestamp: 20210414-154102
+# repo dir: openjdk-jdk
+# git repo: 
+#   Fetch URL: https://github.com/ibmruntimes/openj9-openjdk-jdk11.git
+# sha:
+# ba1caf576ee57574ee49e4e73e77107ddcedb5be
+# ================================================
+# timestamp: 20210414-163527
+# repo dir: openjdk-jdk
+# git repo: 
+#   Fetch URL: https://github.com/ibmruntimes/openj9-openjdk-jdk11.git
+# sha:
+# ba1caf576ee57574ee49e4e73e77107ddcedb5be
+# 
+# Timestamp: Tue Jan 31 20:40:23 2023 UTC 
+1..6
+ok 1 - test_ver_11_0
+  ---
+    duration_ms: 246
+  ...
+ok 2 - test_ver_8to11_0
+  ---
+    duration_ms: 226
+  ...
+ok 3 - test_ver_8to11and17plus_0
+  ---
+    duration_ms: 225
+  ...
+ok 4 - test_disable_ver_11_0 # skip (disabled)
+  ---
+    duration_ms: 43
+  ...
+ok 5 - test_disable_ver_11to17_0 # skip (disabled)
+  ---
+    duration_ms: 47
+  ...
+ok 6 - test_disable_ver_8and17plus_0
+  ---
+    duration_ms: 283
+  ...
