@@ -45,9 +45,10 @@ jobs:
       - name: run script
         env:
           TEST_JDK_HOME: ${{ env.JAVA_HOME }}
+          TEST_OPTIONS: ${{ env.TKG_TEST_OPTIONS }}
         run: |
           cd testTKG/TKG/scripts/testTKG
-          python testRunner.py ${{ env.TKG_TEST_OPTIONS }}
+          python testRunner.py $TEST_OPTIONS
 
   reportFailure:
     runs-on: ubuntu-latest
