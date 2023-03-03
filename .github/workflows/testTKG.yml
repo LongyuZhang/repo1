@@ -8,7 +8,7 @@ jobs:
     if: startsWith(github.event.comment.body, 'run tkg-test')
     steps:
       # get-pr step by @Simran-B https://github.com/actions/checkout/issues/331#issuecomment-707103442
-      - uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975 # v6.4.0
+      - uses: actions/github-script@v3
         id: get-pr
         with:
           script: |
@@ -26,7 +26,8 @@ jobs:
             }
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
-          ref: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}:${{ fromJSON(steps.get-pr.outputs.result).head.ref }}
+          repository: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}
+          ref: ${{ fromJSON(steps.get-pr.outputs.result).head.sha }} # or .head.ref for branch name
           path: 'testTKG'
       - name: Set up JDK
         uses: actions/setup-java@3f07048e3d294f56e9b90ac5ea2c6f74e9ad0f98 # v3.10.0
